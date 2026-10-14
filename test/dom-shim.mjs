@@ -153,6 +153,9 @@ class Node {
   get children() { return this._children.filter(c => c instanceof Node); }
   get childNodes() { return this._children.slice(); }
   get firstChild() { return this._children[0] || null; }
+  get lastChild() { return this._children[this._children.length - 1] || null; }
+  get lastElementChild() { const k = this.children; return k[k.length - 1] || null; }
+  get firstElementChild() { return this.children[0] || null; }
   get textContent() {
     if (this._children.length) return this._children.map(c => c.textContent ?? '').join('');
     return this._text;

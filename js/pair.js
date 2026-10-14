@@ -206,8 +206,12 @@ export function computeScore(orderIds) {
       - (ds[n - 1].id === 'mooncake' ? 0 : 22)
   ));
 
-  const overall = Math.round(balance * .34 + order * .34 + temp * .16 + sweetCurve * .16);
-  return { balance, order, rich, temp, sweetCurve, story, overall };
+  // 统一以「绝对理想」为满分：清浓交替满分 7，浓淡曲线满分 5.6，
+  // 否则平衡项天然被 0.75 封顶，整体分看起来总是不够。
+  const NB = balance / 75 * 100;
+  const NO = Math.max(0, 100 - dist / 5.6 * 100);
+  const overall = Math.round(NO * .34 + NB * .34 + temp * .16 + sweetCurve * .16);
+  return { balance: Math.round(NB), order: Math.round(NO), rich, temp, sweetCurve, story, overall };
 }
 
 export function guestReactions(score) {

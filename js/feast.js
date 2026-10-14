@@ -1,7 +1,7 @@
 /* =========================================================
    feast.js · 成宴（五）：赏月宴图 + 月光卡 + 存图
    ========================================================= */
-import { $, el, cnNum } from './util.js';
+import { $, el, cnNum, clamp } from './util.js';
 import { roomById, weatherById, timeById, moodById, dishById } from './data.js';
 import { FeastScene } from './art.js';
 import { renderDishSVG, renderTeaSVG, renderSideSVG } from './dishes.js';
@@ -10,17 +10,137 @@ import { sfx } from './audio.js';
 
 export function initFeast(app) {
   const fx = new FeastScene($('#cvFeast'));
+  let served = 0;          // 已上几道 —— 一道一道上，不是一次摆满
+  let serving = false;
 
   app.animate(dt => {
     if (app.scene !== 'feast') return;
     fx.step(dt); fx.draw();
   });
 
-  /* ---------------- 圆桌六位 ---------------- */
   const ANGLES = [-90, -30, 30, 90, 150, 210];
+  const SERVE_LINE = [
+    '先上一道清口的 ——',
+    '接着是素的 ——',
+    '浓的来了 ——',
+    '荤的压得住 ——',
+    '这道最厚 ——',
+    '末了一道，收甜 ——'
+  ];
+  const LAST_TALK = [
+    '客人举筷，先尝那一口酸。',
+    '青碧入盘，席上安静了一瞬。',
+    '椰香漫开，话就多起来了。',
+    '板栗烧得起沙，汁收得正紧。',
+    '酥皮一响，满桌都朝这边看。',
+    '月饼一切六分，各人得一块。'
+  ];
 
-  function render() {
+  const note = (sel, val) => { const n = $(sel); if (n) n.querySelector('span').textContent = val; };
+
+  /* 只画已上的菜 */
+  function renderTable(st) {
+    const room = roomById(st.room);
+    const slots = $('#tableSlots');
+    slots.replaceChildren();
+    st.order.forEach((id, i) => {
+      if (i >= served) return;
+      const d = dishById(id);
+      const plate = st.plates[i] || st.plates[0] || room.platingSet[0];
+      const a = ANGLES[i % 6] * Math.PI / 180;
+      const x = 50 + Math.cos(a) * 34;
+      const y = 50 + Math.sin(a) * 34;
+      slots.append(el('div', {
+        class: 'slot', style: `left:${x}%;top:${y}%`,
+        title: `${d.name} · ${plate}`, onclick: () => openRecipe(i)
+      }, [
+        el('span', { class: 'slot-no', text: cnNum(i + 1) }),
+        el('span', { class: 'slot-art', html: renderDishSVG(d, plate, { flavor: st.flavor, swapped: st.allergies, size: 150, uid: 'f' + i }) }),
+        el('span', { class: 'slot-name', text: d.name })
+      ]));
+    });
+  }
+
+  /* 菜卡：未上的压暗等着，已上的亮起来 */
+  function renderCards(st) {
+    const cards = $('#feastCards');
+    cards.replaceChildren();
+    st.order.forEach((id, i) => {
+      const d = dishById(id);
+      const plate = st.plates[i] || st.plates[0];
+      const tune = tuneOf(d, st.flavor);
+      const isServed = i < served;
+      cards.append(el('div', {
+        class: 'fcard ' + (isServed ? 'served' : 'pending'),
+        style: `--c-accent:${d.accent}`,
+        onclick: () => openRecipe(i)
+      }, isServed ? [
+        el('span', { html: renderDishSVG(d, plate, { flavor: st.flavor, swapped: st.allergies, size: 60, uid: 'c' + i }) }),
+        el('b', { text: `${cnNum(i + 1)} · ${d.name}` }),
+        el('small', { text: tune.length ? tune.join('；') : `${plate}　本色` })
+      ] : [
+        el('span', { class: 'fcard-wait', text: '待　上' }),
+        el('b', { text: `${cnNum(i + 1)} · ${d.name}` }),
+        el('small', { text: '点此上这道' })
+      ]));
+    });
+  }
+
+  function syncServeUi(st) {
+    const btn = $('#btnServe');
+    const left = st.order.length - served;
+    if (btn) {
+      if (left > 0) {
+        btn.hidden = false;
+        btn.textContent = `上 菜 · ${cnNum(served + 1)}　${dishById(st.order[served]).name}`;
+      } else {
+        btn.hidden = true;
+      }
+    }
+    const hint = $('#serveHint');
+    if (hint) {
+      hint.textContent = served === 0
+        ? '客官请落座 —— 按「上菜」，或点下面任一菜卡，一道一道来。'
+        : served < st.order.length
+          ? `已上 ${cnNum(served)} 道，尚余 ${cnNum(left)} 道。`
+          : '六道已齐 —— 看席面评语，也可抄下宴帖、存下宴图。';
+    }
+    const done = served >= st.order.length;
+    const mc = document.querySelector('.moon-card-wrap');
+    if (mc) mc.classList.toggle('ready', done);
+    ['#btnFeastDownload', '#btnFeastShare'].forEach(sel => {
+      const b = $(sel);
+      if (b) { if (done) b.removeAttribute('disabled'); else b.setAttribute('disabled', ''); }
+    });
+  }
+
+  /* 上菜：可一道，也可连上到第 n 道 */
+  function serveTo(n, quiet = false) {
     const st = app.state;
+    const target = clamp(n, 0, st.order.length);
+    if (target <= served || serving) return;
+    serving = true;
+    const step = () => {
+      served += 1;
+      const i = served - 1;
+      const d = dishById(st.order[i]);
+      renderTable(st);
+      const slots = $('#tableSlots').querySelectorAll('.slot');
+      const just = slots[slots.length - 1];
+      if (just) just.classList.add('fresh');
+      renderCards(st);
+      syncServeUi(st);
+      if (!quiet) {
+        sfx(i === st.order.length - 1 ? 'gong' : 'cup');
+        app.toast(`${cnNum(i + 1)}　${SERVE_LINE[i] || ''}${d.name}　——　${d.texture}。${LAST_TALK[i] || ''}`, 4600);
+      }
+      if (served < target) setTimeout(step, 640);
+      else serving = false;
+    };
+    step();
+  }
+
+  function renderMeta(st) {
     const room = roomById(st.room);
     const w = weatherById(st.weather);
     const t = timeById(st.time);
@@ -30,56 +150,17 @@ export function initFeast(app) {
     fx.setRoom(room, w, t);
     fx.api.fit();
 
-    // 头
     $('#feastSub').textContent = name;
     $('#feastPoem').textContent = `「${st.poem[0]}」`;
     $('#feastPoemSrc').textContent = `—— ${st.poem[1]}`;
     $('#tcName').textContent = room.name;
     $('#tcLine').textContent = room.couplet;
 
-    // 桌上六盘
-    const slots = $('#tableSlots');
-    slots.replaceChildren();
-    st.order.forEach((id, i) => {
-      const d = dishById(id);
-      const plate = st.plates[i] || st.plates[0] || room.platingSet[0];
-      const a = ANGLES[i % 6] * Math.PI / 180;
-      const x = 50 + Math.cos(a) * 37;
-      const y = 50 + Math.sin(a) * 31;
-      const node = el('div', {
-        class: 'slot', style: `left:${x}%;top:${y}%;animation-delay:${i * .09}s`,
-        title: `${d.name} · ${plate}`, onclick: () => openRecipe(i)
-      }, [
-        el('span', { class: 'slot-no', text: cnNum(i + 1) }),
-        el('span', { html: renderDishSVG(d, plate, { flavor: st.flavor, swapped: st.allergies, size: 150, uid: 'f' + i }) }),
-        el('span', { class: 'slot-name', text: d.name })
-      ]);
-      slots.append(node);
-    });
-
-    // 备注
-    const note = (sel, val) => { const n = $(sel); if (n) n.querySelector('span').textContent = val; };
     note('#noteTea', st.tea.map(x => `${x.stage}${x.name}`).join(' · '));
     note('#noteSide', st.side.join(' · '));
     note('#notePlate', Array.from(new Set(st.plates)).join(' · '));
     note('#noteMood', `${mood.name} · ${room.utensils}`);
 
-    // 菜卡
-    const cards = $('#feastCards');
-    cards.replaceChildren();
-    st.order.forEach((id, i) => {
-      const d = dishById(id);
-      const plate = st.plates[i] || st.plates[0];
-      const tune = tuneOf(d, st.flavor);
-      const node = el('div', { class: 'fcard', style: `--c-accent:${d.accent}`, onclick: () => openRecipe(i) }, [
-        el('span', { html: renderDishSVG(d, plate, { flavor: st.flavor, swapped: st.allergies, size: 74, uid: 'c' + i }) }),
-        el('b', { text: `${cnNum(i + 1)} · ${d.name}` }),
-        el('small', { text: tune.length ? tune.join('；') : `${plate}　本色` })
-      ]);
-      cards.append(node);
-    });
-
-    // 月光卡
     const score = computeScore(st.order);
     st.score = score;
     $('#mcName').textContent = name;
@@ -88,21 +169,30 @@ export function initFeast(app) {
     const top = guests.reduce((a, b) => (b.value > a.value ? b : a), guests[0]);
     $('#mcMeta').textContent = `${st.order.length}道 · ${st.tea.map(x => x.name).join('·')} · ${st.side.join('、')} · 席面 ${score.overall} 分 · ${top.name}最合`;
 
-    // 分享/抄录用的文本
     st.shareText = sharingText({
       room, weather: w, time: t, mood: st.mood,
       flavors: [st.flavor], allergies: st.allergies,
       tea: st.tea, side: st.side, plates: st.plates,
       poem: st.poem, score, order: st.order
     });
+  }
 
-    fx.setRoom(room, w, t);
+  function render() {
+    const st = app.state;
+    if (!st.order || !st.order.length) return;
+    served = 0;
+    serving = false;
+    renderMeta(st);
+    renderTable(st);
+    renderCards(st);
+    syncServeUi(st);
+    app.toast('落座 —— 圆桌空着，等菜。', 3800);
   }
 
   function openRecipe(i) {
     const st = app.state;
-    const d = dishById(st.order[i]);
-    app.room.openRecipe(d);
+    if (i >= served) { serveTo(i + 1); return; }
+    app.room.openRecipe(dishById(st.order[i]));
   }
 
   /* ---------------- 存下宴图：把宴图重绘成一张 PNG ---------------- */
@@ -115,8 +205,9 @@ export function initFeast(app) {
     const name = feastName(room, w, t, st.mood);
     const score = st.score || computeScore(st.order);
     const W = 1240, H = 940;
-    const [sky0, sky1] = [w.sky[2], '#04070d'];
+    const sky0 = w.sky[2], sky1 = '#04070d';
     const COORD = [[620, 300], [880, 430], [880, 690], [620, 820], [360, 690], [360, 430]];
+    const esc = v => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
     const dishes = st.order.map((id, i) => {
       const d = dishById(id);
@@ -125,10 +216,7 @@ export function initFeast(app) {
       const inner = renderDishSVG(d, plate, { flavor: st.flavor, swapped: st.allergies, size: 176, uid: 'card' + i });
       const body = inner.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
       return `<g transform="translate(${cx - 88} ${cy - 88})">${body}</g>
-        <g transform="translate(${cx} ${cy + 92})">
-          <circle cx="-0" cy="0" r="0" fill="none"/>
-          <text x="0" y="0" text-anchor="middle" font-size="17" fill="#efe0b6" font-family="serif">${cnNum(i + 1)}. ${esc(d.name)}</text>
-        </g>`;
+        <text x="${cx}" y="${cy + 96}" text-anchor="middle" font-size="17" fill="#efe0b6" font-family="serif">${cnNum(i + 1)}. ${esc(d.name)}</text>`;
     }).join('');
 
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
@@ -178,12 +266,8 @@ export function initFeast(app) {
   <text x="60" y="856" font-size="15" fill="#c9b98d" font-family="serif" letter-spacing="1">小菜　${esc(st.side.join(' · '))}</text>
   <text x="60" y="882" font-size="15" fill="#c9b98d" font-family="serif" letter-spacing="1">盘器　${esc(Array.from(new Set(st.plates)).join(' · '))}</text>
   <text x="60" y="908" font-size="15" fill="#c9b98d" font-family="serif" letter-spacing="1">席面　清浓相济 ${score.balance} · 浓淡次第 ${score.order} · 总分 ${score.overall}</text>
-  <text x="1180" y="908" text-anchor="end" font-size="13" fill="#8d8161" font-family="serif" letter-spacing="2">一枝桂 · 中华大饭庄</text>
+  <text x="1180" y="908" text-anchor="end" font-size="13" fill="#8d8161" font-family="serif" letter-spacing="2">一 枝 桂</text>
 </svg>`;
-  }
-
-  function esc(s) {
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   function downloadCard() {
@@ -205,7 +289,6 @@ export function initFeast(app) {
         a.click();
         app.toast('宴图已存下。');
       } catch (err) {
-        // 若画布被污染，退回直接下载 SVG
         const a2 = document.createElement('a');
         a2.download = '一枝桂赏月宴图.svg';
         a2.href = URL.createObjectURL(new Blob([svgText], { type: 'image/svg+xml' }));
@@ -224,6 +307,9 @@ export function initFeast(app) {
   }
 
   /* ---------------- 按钮 ---------------- */
+  $('#btnServe')?.addEventListener('click', () => serveTo(served + 1));
+  $('#btnServeAll')?.addEventListener('click', () => serveTo(app.state.order.length, true));
+
   $('#btnFeastWalk')?.addEventListener('click', () => { sfx('door'); app.go('corridor'); });
   $('#btnFeastShare')?.addEventListener('click', async () => {
     sfx('tick');
@@ -249,7 +335,12 @@ export function initFeast(app) {
   });
   $('#btnFeastDownload')?.addEventListener('click', () => { sfx('cup'); downloadCard(); });
 
-  app.onEnter('feast', () => { render(); });
+  app.onEnter('feast', () => {
+    render();
+    // ?served=N 便于查看上菜中途的样子（也用于自检）
+    const n = Number(new URLSearchParams(location.search).get('served'));
+    if (n > 0) setTimeout(() => serveTo(Math.min(n, app.state.order.length), true), 30);
+  });
   app.bus.on('sitdown', () => { /* 进入场景时统一渲染 */ });
   app.feast = { render, downloadCard, buildCardSVG };
 }

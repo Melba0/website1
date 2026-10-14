@@ -184,15 +184,50 @@ check('评分有四项', $$('#scoreRow .sc').length === 4);
 check('宾客有四位', $$('#guestRow .guest').length === 4);
 check('评分注释非空', ($('#scoreComment').textContent || '').length > 5, $('#scoreComment').textContent);
 
-console.log('⑥ 落座成宴');
+console.log('⑥ 落座成宴（一道一道上）');
 click('#btnSitDown'); step(4);
 check('进入 feast', app().scene === 'feast', app().scene);
-check('圆桌六盘', $$('#tableSlots .slot').length === 6, '' + $$('#tableSlots .slot').length);
-check('菜卡六张', $$('#feastCards .fcard').length === 6, '' + $$('#feastCards .fcard').length);
+check('上桌前桌上是空的', $$('#tableSlots .slot').length === 0, '' + $$('#tableSlots .slot').length);
+check('六张菜卡都在（前五道待上）', $$('#feastCards .fcard').length === 6, '' + $$('#feastCards .fcard').length);
+check('待上的菜卡有 6 张', $$('#feastCards .fcard.pending').length === 6, '');
+check('上菜按钮在', $('#btnServe').hidden === false);
+{
+  const first = { shrimp: '金柚', asparagus: '玉盘', crab: '秋夜', chicken: '枫红', duck: '月满', mooncake: '霜天' }[app().state.order[0]];
+  check('上菜按钮写着当前第一道菜名', ($('#btnServe').textContent || '').includes(first), $('#btnServe').textContent);
+}
+check('未上齐时不能存图', $('#btnFeastDownload').hasAttribute('disabled'), '');
+check('月光卡未点亮', !$('.moon-card-wrap').classList.contains('ready'), '');
+
+for (let k = 1; k <= 6; k++) {
+  click('#btnServe');
+  await new Promise(r => setTimeout(r, 700));
+  step(3);
+  check(`上第 ${k} 道：桌上 ${k} 盘`, $$('#tableSlots .slot').length === k, '' + $$('#tableSlots .slot').length);
+  check(`　第 ${k} 道刚上桌有高亮`, $$('#tableSlots .slot.fresh').length === 1, '');
+  check(`　已上的菜卡 ${k} 张`, $$('#feastCards .fcard.served').length === k, '' + $$('#feastCards .fcard.served').length);
+}
+check('六道齐后按钮收起', $('#btnServe').hidden === true, '');
+check('六道齐后提醒改口', ($('#serveHint').textContent || '').includes('六道已齐'), $('#serveHint').textContent);
+check('六道齐后月光卡点亮', $('.moon-card-wrap').classList.contains('ready'), '');
+check('六道齐后可以存图', !$('#btnFeastDownload').hasAttribute('disabled'), '');
+check('菜名与次序一致', $$('#tableSlots .slot-name').map(n => n.textContent).join('|') ===
+  app().state.order.map(id => ({ shrimp: '金柚醋拌鲜虾沙拉', asparagus: '玉盘百合清炒芦笋', crab: '秋夜椰香咖喱芋蟹', chicken: '枫红香菇板栗烧鸡', duck: '月满桂香酥皮嫩鸭', mooncake: '霜天团圆冰皮月饼' }[id])).join('|'),
+  $$('#tableSlots .slot-name').map(n => n.textContent).join('|'));
+check('盘名都有文字', $$('.slot-name').every(n => (n.textContent || '').length > 3), $$('.slot-name').map(n => n.textContent).join('/'));
 check('月光卡有名字', ($('#mcName').textContent || '').includes('·'), $('#mcName').textContent);
 check('宴图副题与月光卡一致', $('#feastSub').textContent === $('#mcName').textContent, $('#feastSub').textContent);
 check('宴帖文本已生成', (app().state.shareText || '').length > 80, '' + (app().state.shareText || '').length);
 check('桌上每盘都是 svg', $$('#tableSlots .slot').every(s => hasTag(s, 'svg')));
+
+/* 一气上齐 */
+click('#btnFeastAgain'); step(3);
+await new Promise(r => setTimeout(r, 400)); step(3);
+check('全局随缘后回到 room 或 feast', ['room', 'feast'].includes(app().scene), app().scene);
+if (app().scene === 'feast') {
+  click('#btnServeAll'); step(4);
+  await new Promise(r => setTimeout(r, 1200)); step(3);
+  check('一气上齐后桌上六盘', $$('#tableSlots .slot').length === 6, '' + $$('#tableSlots .slot').length);
+}
 
 const card = app().feast.buildCardSVG();
 check('存图 SVG 完整', card.startsWith('<svg') && card.endsWith('</svg>') && !/undefined|NaN/.test(card), card.length + ' 字符');

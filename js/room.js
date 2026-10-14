@@ -108,10 +108,11 @@ export function initRoom(app) {
             el('button', { type: 'button', title: '上移', onclick: e => { e.stopPropagation(); moveCourse(i, -1); } }, ['↑']),
             el('button', { type: 'button', title: '下移', onclick: e => { e.stopPropagation(); moveCourse(i, 1); } }, ['↓'])
           ]),
-          el('button', { class: 'mini', type: 'button', onclick: () => openRecipe(d) }, ['配 方 全 卡'])
+          el('button', { class: 'mini', type: 'button', onclick: () => openRecipe(d) }, ['配 方'])
         ])
       ]);
-      listEl.append(node);
+      // 外层包一层，便于宽屏两栏排布（列优先，一栏三道）
+      listEl.append(el('span', { class: 'course-slot' }, [node]));
     });
     bindDrag();
   }
@@ -128,7 +129,8 @@ export function initRoom(app) {
 
   let dragEl = null;
   function bindDrag() {
-    Array.from(listEl.children).forEach(node => {
+    const items = Array.from(listEl.querySelectorAll('.course'));
+    items.forEach(node => {
       node.addEventListener('dragstart', e => {
         dragEl = node; node.classList.add('dragging');
         e.dataTransfer.effectAllowed = 'move';
@@ -136,7 +138,7 @@ export function initRoom(app) {
       });
       node.addEventListener('dragend', () => {
         node.classList.remove('dragging');
-        Array.from(listEl.children).forEach(n => n.classList.remove('drop-target'));
+        items.forEach(n => n.classList.remove('drop-target'));
         dragEl = null;
       });
       node.addEventListener('dragover', e => {

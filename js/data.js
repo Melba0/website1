@@ -66,14 +66,14 @@ export const weatherById = id => WEATHERS.find(w => w.id === id) || WEATHERS[0];
 export const TIMES = [
   {
     id: 'geng1', name: '初更', moonLabel: '月在东',
-    moon: { x: 0.16, y: 0.31, r: 36 },
+    moon: { x: 0.15, y: 0.32, r: 36 },
     sky: ['#0a1424', '#12203a', '#1e3654'], starOp: 0.5, lantern: 0.5, chill: 0.2,
     sense: '天刚擦黑，灯笼才点上，桂影还淡',
     poem: '月上柳梢头，人约黄昏后。', moonWord: '东'
   },
   {
     id: 'midnight', name: '夜半', moonLabel: '月在中天',
-    moon: { x: 0.54, y: 0.24, r: 50 },
+    moon: { x: 0.56, y: 0.26, r: 50 },
     sky: ['#060c19', '#0e1a2e', '#1b2f4e'], starOp: 1, lantern: 1, chill: 0.5,
     sense: '月到中天，桂影最浓，酒也最暖',
     poem: '今夜月明人尽望，不知秋思落谁家。', moonWord: '中'
@@ -94,7 +94,7 @@ export const TIMES = [
   },
   {
     id: 'zenith', name: '满月当空', moonLabel: '月正中',
-    moon: { x: 0.44, y: 0.20, r: 66 },
+    moon: { x: 0.40, y: 0.27, r: 66 },
     sky: ['#050a16', '#0b1730', '#182c4c'], starOp: 0.9, lantern: 1, chill: 0.45,
     sense: '月大得惊人，银白铺了一地，走路像踩在水上',
     poem: '海上生明月，天涯共此时。', moonWord: '正'

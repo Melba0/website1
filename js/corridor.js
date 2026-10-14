@@ -21,8 +21,6 @@ export function initCorridor(app) {
   const doorEls = ROOMS.map((room, i) => {
     const x = START_X + i * DOOR_GAP;
     const node = el('div', { class: 'cw-door', 'data-room': room.id, 'data-x': x, style: `left:${x}px` }, [
-      // 门槛石
-      el('div', { class: 'door-sill' }),
       // 灯柱（门两侧各一，纯 CSS 石灯）
       el('div', { class: 'door-post pl' }, [el('i'), el('b')]),
       el('div', { class: 'door-post pr' }, [el('i'), el('b')]),
@@ -31,11 +29,12 @@ export function initCorridor(app) {
       // 门牌 · 对联
       el('div', { class: 'door-plate', text: room.name }),
       el('div', { class: 'door-couplet', text: room.couplet }),
-      // 门洞
+      // 门洞（门槛石挂在里面，保证严丝合缝）
       el('div', { class: 'door-frame' }, [
         el('div', { class: 'door-inner-glow' }),
         el('div', { class: 'door-leaf' }),
-        el('div', { class: 'door-lintel' })
+        el('div', { class: 'door-lintel' }),
+        el('div', { class: 'door-sill' })
       ]),
       el('div', { class: 'door-aura', style: `--door-aura:${room.aura}` }),
       el('div', { class: 'door-hint', text: `探头 · ${room.plating}` })
