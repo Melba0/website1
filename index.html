@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>一枝桂赏月宴 · 中华大饭庄</title>
+<meta name="description" content="推门入店，看天时，穿走廊，挑包间，落座成宴——一枝桂赏月宴。" />
+<link rel="stylesheet" href="css/style.css" />
+<script>
+/* 诊断开关：?diag=1 时把页内脚本错误写到画面上，便于无头截图排查 */
+(function () {
+  if (!/[?&]diag=1/.test(location.search)) return;
+  var show = function (msg) {
+    var d = document.getElementById('diagbox');
+    if (!d) {
+      d = document.createElement('pre');
+      d.id = 'diagbox';
+      d.style.cssText = 'position:fixed;left:0;bottom:0;z-index:999;max-width:100vw;max-height:42vh;overflow:auto;' +
+        'margin:0;padding:8px 12px;background:rgba(120,0,0,.92);color:#fff;font:12px/1.6 monospace;white-space:pre-wrap';
+      (document.body || document.documentElement).appendChild(d);
+    }
+    d.textContent += msg + '\n';
+  };
+  window.addEventListener('error', function (e) {
+    show('ERROR: ' + (e.message || '') + '\n  @ ' + (e.filename || '') + ':' + (e.lineno || '') +
+      (e.error && e.error.stack ? '\n' + e.error.stack : ''));
+  });
+  window.addEventListener('unhandledrejection', function (e) {
+    show('REJECT: ' + ((e.reason && (e.reason.stack || e.reason.message)) || e.reason));
+  });
+  var ow = console.warn, oe = console.error;
+  console.warn = function () { show('WARN: ' + [].join.call(arguments, ' ')); ow.apply(console, arguments); };
+  console.error = function () { show('ERR: ' + [].join.call(arguments, ' ')); oe.apply(console, arguments); };
+})();
+</script>
+</head>
+<body>
+
+<!-- ============ 全局 SVG 仓库 ============ -->
+<svg id="defs" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="gMoon" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#fffdf3"/>
+      <stop offset="62%"  stop-color="#f7efcf"/>
+      <stop offset="88%"  stop-color="#e8d79c"/>
+      <stop offset="100%" stop-color="#d8c485" stop-opacity=".55"/>
+    </radialGradient>
+    <radialGradient id="gHalo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#fff6d6" stop-opacity=".55"/>
+      <stop offset="38%"  stop-color="#f4e6b0" stop-opacity=".20"/>
+      <stop offset="100%" stop-color="#f4e6b0" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- 月面：柔和受光，右下微暗 -->
+    <radialGradient id="gMoonFace" cx="36%" cy="30%" r="78%">
+      <stop offset="0%"   stop-color="#fffef7"/>
+      <stop offset="46%"  stop-color="#f9f2d6"/>
+      <stop offset="80%"  stop-color="#ecdfae"/>
+      <stop offset="100%" stop-color="#d9c78c"/>
+    </radialGradient>
+    <linearGradient id="gRoof2" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0%"   stop-color="#9dabbe"/>
+      <stop offset="40%"  stop-color="#6d7c91"/>
+      <stop offset="100%" stop-color="#414e60"/>
+    </linearGradient>
+    <linearGradient id="gBoard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#5d6a7c"/>
+      <stop offset="100%" stop-color="#333d4a"/>
+    </linearGradient>
+    <linearGradient id="gEaveTop" x1="0" y1="0" x2="0.15" y2="1">
+      <stop offset="0%"   stop-color="#7d8ca2"/>
+      <stop offset="26%"  stop-color="#4e5d72"/>
+      <stop offset="72%"  stop-color="#313c4b"/>
+      <stop offset="100%" stop-color="#202834"/>
+    </linearGradient>
+    <linearGradient id="gGround" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1a2942"/>
+      <stop offset="100%" stop-color="#0a1120"/>
+    </linearGradient>
+    <linearGradient id="gWaterBot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#16283f" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="#070d18" stop-opacity=".98"/>
+    </linearGradient>
+    <!-- 桂花叶 -->
+    <linearGradient id="gLeaf" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%"   stop-color="#4a6740"/>
+      <stop offset="55%"  stop-color="#31492c"/>
+      <stop offset="100%" stop-color="#1e2f1c"/>
+    </linearGradient>
+    <linearGradient id="gLeafBack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#334c2e"/>
+      <stop offset="100%" stop-color="#16231a"/>
+    </linearGradient>
+    <!-- 枝干 -->
+    <linearGradient id="gBark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#6b5636"/>
+      <stop offset="40%"  stop-color="#4a3a22"/>
+      <stop offset="100%" stop-color="#2b2114"/>
+    </linearGradient>
+    <!-- 花瓣 -->
+    <radialGradient id="gPetal" cx="40%" cy="34%" r="70%">
+      <stop offset="0%"   stop-color="#fff6cf"/>
+      <stop offset="52%"  stop-color="#f8d869"/>
+      <stop offset="100%" stop-color="#dc9c22"/>
+    </radialGradient>
+    <radialGradient id="gLantern" cx="50%" cy="45%" r="55%">
+      <stop offset="0%"   stop-color="#ffdca8"/>
+      <stop offset="55%"  stop-color="#ff8f4d"/>
+      <stop offset="100%" stop-color="#c8401f"/>
+    </radialGradient>
+    <radialGradient id="gGlowWarm" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#ffb45c" stop-opacity=".62"/>
+      <stop offset="55%"  stop-color="#ff9a3c" stop-opacity=".18"/>
+      <stop offset="100%" stop-color="#ff8a2c" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gRoof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#7c8ba0"/>
+      <stop offset="50%"  stop-color="#4d5c70"/>
+      <stop offset="100%" stop-color="#2a3441"/>
+    </linearGradient>
+    <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#f2e9d8"/>
+      <stop offset="55%"  stop-color="#dfd4be"/>
+      <stop offset="100%" stop-color="#bdb098"/>
+    </linearGradient>
+    <linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#7a4a2b"/>
+      <stop offset="60%"  stop-color="#5a3320"/>
+      <stop offset="100%" stop-color="#3d2115"/>
+    </linearGradient>
+    <linearGradient id="gSilk" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#f3e6c8"/>
+      <stop offset="50%"  stop-color="#e7d3a6"/>
+      <stop offset="100%" stop-color="#c9ad78"/>
+    </linearGradient>
+    <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1c2f4a" stop-opacity=".85"/>
+      <stop offset="100%" stop-color="#0b1524" stop-opacity=".95"/>
+    </linearGradient>
+    <linearGradient id="gBamboo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#5d7a52"/>
+      <stop offset="100%" stop-color="#2c3d29"/>
+    </linearGradient>
+    <linearGradient id="gInk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#3a4657"/>
+      <stop offset="100%" stop-color="#141b25"/>
+    </linearGradient>
+
+    <filter id="fBlur6"  x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="fBlur14" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="fBlur2"  x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2"/></filter>
+    <filter id="fGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- 云 -->
+    <symbol id="sCloud" viewBox="0 0 300 120">
+      <g fill="currentColor">
+        <ellipse cx="64"  cy="80" rx="60" ry="24" opacity=".85"/>
+        <ellipse cx="132" cy="62" rx="78" ry="34"/>
+        <ellipse cx="208" cy="80" rx="58" ry="24" opacity=".85"/>
+        <ellipse cx="252" cy="86" rx="40" ry="17" opacity=".7"/>
+        <ellipse cx="150" cy="92" rx="112" ry="20" opacity=".75"/>
+        <ellipse cx="96"  cy="52" rx="46" ry="22" opacity=".8"/>
+      </g>
+    </symbol>
+
+    <!-- 一枝桂（420×300）：主枝自左探出，两处分叉，二十簇金桂 -->
+    <symbol id="sOsmanthus" viewBox="0 0 420 300">
+      <!-- 枝干 -->
+      <g fill="none" stroke="url(#gBark)" stroke-linecap="round">
+        <path d="M-10 12 C 96 46, 190 92, 264 142 C 322 181, 372 226, 424 270" stroke-width="11"/>
+        <path d="M78 42 C 108 74, 130 100, 152 116 C 182 138, 218 150, 258 154" stroke-width="6"/>
+        <path d="M212 118 C 240 142, 262 172, 276 210 C 286 238, 290 262, 290 286" stroke-width="5.4"/>
+        <path d="M44 26 C 22 34, 4 42, -14 54" stroke-width="5"/>
+        <path d="M150 100 C 138 132, 128 158, 122 190" stroke-width="4.2"/>
+        <path d="M332 200 C 366 194, 396 182, 424 164" stroke-width="4.4"/>
+        <path d="M258 152 C 264 122, 266 96, 262 64" stroke-width="4.4"/>
+      </g>
+      <g fill="none" stroke="#8a7448" stroke-width="1.1" opacity=".45">
+        <path d="M40 26 C 140 60, 232 108, 300 164"/>
+        <path d="M212 122 C 250 160, 274 210, 284 268"/>
+      </g>
+
+      <!-- 叶片：背面（暗） -->
+      <g fill="url(#gLeafBack)" opacity=".9">
+        <ellipse cx="60"  cy="16"  rx="27" ry="9" transform="rotate(-18 60 16)"/>
+        <ellipse cx="196" cy="76"  rx="28" ry="9" transform="rotate(-40 196 76)"/>
+        <ellipse cx="330" cy="196" rx="26" ry="9" transform="rotate(-6 330 196)"/>
+        <ellipse cx="120" cy="70"  rx="25" ry="8" transform="rotate(50 120 70)"/>
+        <ellipse cx="252" cy="242" rx="24" ry="8" transform="rotate(72 252 242)"/>
+      </g>
+      <!-- 叶片：正面 -->
+      <g fill="url(#gLeaf)">
+        <ellipse cx="46"  cy="60"  rx="30" ry="10" transform="rotate(34 46 60)"/>
+        <ellipse cx="112" cy="34"  rx="29" ry="10" transform="rotate(-14 112 34)"/>
+        <ellipse cx="170" cy="118" rx="31" ry="10" transform="rotate(58 170 118)"/>
+        <ellipse cx="228" cy="96"  rx="29" ry="10" transform="rotate(-34 228 96)"/>
+        <ellipse cx="286" cy="160" rx="28" ry="9"  transform="rotate(22 286 160)"/>
+        <ellipse cx="356" cy="150" rx="26" ry="9"  transform="rotate(-16 356 150)"/>
+        <ellipse cx="80"  cy="132" rx="27" ry="9"  transform="rotate(66 80 132)"/>
+        <ellipse cx="176" cy="212" rx="25" ry="8"  transform="rotate(80 176 212)"/>
+        <ellipse cx="300" cy="264" rx="24" ry="8"  transform="rotate(24 300 264)"/>
+        <ellipse cx="388" cy="234" rx="23" ry="8"  transform="rotate(-28 388 234)"/>
+        <ellipse cx="16"  cy="118" rx="24" ry="8"  transform="rotate(44 16 118)"/>
+        <ellipse cx="244" cy="34"  rx="24" ry="8"  transform="rotate(-52 244 34)"/>
+      </g>
+      <g fill="none" stroke="#5f7f4c" stroke-width=".8" opacity=".55">
+        <path d="M24 52 L68 68"/><path d="M92 30 L132 38"/><path d="M148 108 L192 128"/>
+        <path d="M210 90 L246 102"/><path d="M268 154 L304 168"/><path d="M340 146 L372 156"/>
+      </g>
+
+      <!-- 花团 -->
+      <g class="osmanthus-bloom">
+        <use href="#sBlossom" width="34" height="34" x="30"  y="18"  />
+        <use href="#sBlossom" width="26" height="26" x="86"  y="52"  />
+        <use href="#sBlossom" width="30" height="30" x="44"  y="104" />
+        <use href="#sBlossom" width="36" height="36" x="142" y="86"  />
+        <use href="#sBlossom" width="24" height="24" x="196" y="42"  />
+        <use href="#sBlossom" width="30" height="30" x="238" y="120" />
+        <use href="#sBlossom" width="26" height="26" x="296" y="76"  />
+        <use href="#sBlossom" width="34" height="34" x="332" y="160" />
+        <use href="#sBlossom" width="24" height="24" x="386" y="212" />
+        <use href="#sBlossom" width="28" height="28" x="150" y="176" />
+        <use href="#sBlossom" width="26" height="26" x="232" y="196" />
+        <use href="#sBlossom" width="22" height="22" x="276" y="248" />
+        <use href="#sBlossom" width="30" height="30" x="102" y="150" />
+        <use href="#sBlossom" width="22" height="22" x="16"  y="68"  />
+        <use href="#sBlossom" width="26" height="26" x="204" y="14"  />
+        <use href="#sBlossom" width="22" height="22" x="368" y="120" />
+        <use href="#sBlossom" width="24" height="24" x="66"  y="196" />
+        <use href="#sBlossom" width="20" height="20" x="316" y="246" />
+        <use href="#sBlossom" width="24" height="24" x="128" y="248" />
+        <use href="#sBlossom" width="20" height="20" x="404" y="88"  />
+        <!-- 零星落花 -->
+        <use href="#sBlossom" width="14" height="14" x="112" y="222" opacity=".7"/>
+        <use href="#sBlossom" width="12" height="12" x="262" y="176" opacity=".6"/>
+        <use href="#sBlossom" width="13" height="13" x="6"   y="176" opacity=".65"/>
+      </g>
+    </symbol>
+
+    <!-- 单簇金桂：五瓣围心 -->
+    <symbol id="sBlossom" viewBox="0 0 28 28">
+      <g>
+        <circle cx="14" cy="7.4"  r="4.7" fill="url(#gPetal)"/>
+        <circle cx="20.2" cy="12" r="4.7" fill="url(#gPetal)"/>
+        <circle cx="17.8" cy="19.4" r="4.7" fill="url(#gPetal)"/>
+        <circle cx="10.2" cy="19.4" r="4.7" fill="url(#gPetal)"/>
+        <circle cx="7.8"  cy="12" r="4.7" fill="url(#gPetal)"/>
+        <circle cx="14" cy="13.4" r="3.1" fill="#e8a52a"/>
+        <circle cx="13" cy="12.4" r="1.2" fill="#fff3c8" opacity=".8"/>
+      </g>
+    </symbol>
+
+    <!-- 灯笼 -->
+    <symbol id="sLantern" viewBox="0 0 100 170">
+      <g stroke="#3b2113" stroke-width="2">
+        <path d="M50 0 V 16" fill="none"/>
+        <rect x="30" y="14" width="40" height="8" rx="2" fill="#6d3a1c"/>
+        <rect x="30" y="146" width="40" height="8" rx="2" fill="#6d3a1c"/>
+      </g>
+      <ellipse cx="50" cy="86" rx="42" ry="58" fill="url(#gLantern)"/>
+      <g stroke="#8c3a1c" stroke-width="1.2" opacity=".55" fill="none">
+        <path d="M50 30 C 26 44, 18 68, 18 86 C 18 104, 26 128, 50 142"/>
+        <path d="M50 30 C 74 44, 82 68, 82 86 C 82 104, 74 128, 50 142"/>
+        <path d="M14 86 H 86"/>
+      </g>
+      <ellipse cx="50" cy="86" rx="30" ry="44" fill="#fff0c4" opacity=".28"/>
+      <g fill="#f7d24a" opacity=".95">
+        <path d="M50 56 L58 78 H42 Z"/>
+      </g>
+      <g stroke="#b8381f" stroke-width="3" fill="none">
+        <path d="M50 154 V 162"/><path d="M42 154 V 166"/><path d="M58 154 V 166"/>
+      </g>
+    </symbol>
+
+    <!-- 竹 -->
+    <symbol id="sBamboo" viewBox="0 0 120 320">
+      <g fill="none" stroke-linecap="round">
+        <path d="M38 320 C 41 250, 45 170, 50 92 C 52 62, 54 40, 56 18" stroke="#3c5540" stroke-width="9"/>
+        <path d="M80 320 C 82 260, 85 196, 89 132 C 91 104, 93 82, 96 62" stroke="#2f4534" stroke-width="6.4"/>
+        <path d="M62 320 C 63 288, 64 262, 64 240" stroke="#26382a" stroke-width="4.6"/>
+      </g>
+      <g stroke="#1d2b20" stroke-width="2" opacity=".85">
+        <path d="M37 272 H 59"/><path d="M39 214 H 61"/><path d="M43 150 H 64"/><path d="M48 96 H 66"/>
+        <path d="M79 282 H 97"/><path d="M82 224 H 99"/><path d="M87 162 H 102"/>
+      </g>
+      <g stroke="#4a6a46" stroke-width="1.2" opacity=".5" fill="none">
+        <path d="M40 300 V 250"/><path d="M81 300 V 240"/>
+      </g>
+      <g fill="#2e4429" opacity=".92">
+        <ellipse cx="88" cy="52"  rx="27" ry="5.6" transform="rotate(-26 88 52)"/>
+        <ellipse cx="100" cy="78" rx="23" ry="5"   transform="rotate(-10 100 78)"/>
+        <ellipse cx="70"  cy="26" rx="22" ry="5"   transform="rotate(-40 70 26)"/>
+        <ellipse cx="18"  cy="120" rx="25" ry="5.6" transform="rotate(18 18 120)"/>
+        <ellipse cx="6"   cy="152" rx="21" ry="5"  transform="rotate(32 6 152)"/>
+        <ellipse cx="104" cy="126" rx="21" ry="5"  transform="rotate(-20 104 126)"/>
+        <ellipse cx="112" cy="196" rx="19" ry="4.6" transform="rotate(-6 112 196)"/>
+        <ellipse cx="10"  cy="216" rx="19" ry="4.6" transform="rotate(24 10 216)"/>
+        <ellipse cx="34"  cy="168" rx="20" ry="4.8" transform="rotate(56 34 168)"/>
+      </g>
+    </symbol>
+
+    <!-- 水缸（含水面与月影） -->
+    <symbol id="sJar" viewBox="0 0 200 200">
+      <ellipse cx="100" cy="188" rx="66" ry="10" fill="#000" opacity=".45"/>
+      <!-- 缸身 -->
+      <path d="M28 58 C 20 104, 32 152, 62 178 C 86 196, 114 196, 138 178 C 168 152, 180 104, 172 58 Z" fill="#2a2e37"/>
+      <path d="M28 58 C 20 104, 32 152, 62 178 C 86 196, 114 196, 138 178 C 168 152, 180 104, 172 58 Z" fill="none" stroke="#4b5464" stroke-width="2.6"/>
+      <path d="M36 76 C 32 112, 44 148, 68 170" fill="none" stroke="#5d6675" stroke-width="4" opacity=".38"/>
+      <path d="M164 76 C 168 112, 156 148, 132 170" fill="none" stroke="#1b1f26" stroke-width="5" opacity=".6"/>
+      <!-- 缸沿 -->
+      <ellipse cx="100" cy="58" rx="74" ry="21" fill="#3a4050"/>
+      <ellipse cx="100" cy="55" rx="72" ry="20" fill="#2c323d"/>
+      <ellipse cx="100" cy="58" rx="74" ry="21" fill="none" stroke="#5a6376" stroke-width="2.4"/>
+      <!-- 水面 -->
+      <ellipse cx="100" cy="57" rx="63" ry="16" fill="#0c1522"/>
+      <ellipse cx="100" cy="57" rx="63" ry="16" fill="none" stroke="#1e2b3c" stroke-width="1.4"/>
+      <!-- 月影 -->
+      <ellipse cx="100" cy="57" rx="20" ry="6.4" fill="#f6ecc9" opacity=".34"/>
+      <ellipse cx="100" cy="57" rx="11" ry="3.6" fill="#fff8dd" opacity=".5"/>
+      <!-- 水面涟漪 -->
+      <g class="jar-ripple" fill="none" stroke="#dfe8f2" stroke-width="1" opacity=".4">
+        <ellipse cx="100" cy="57" rx="30" ry="9"/>
+        <ellipse cx="100" cy="57" rx="44" ry="12" opacity=".5"/>
+      </g>
+      <!-- 浮叶 -->
+      <ellipse cx="128" cy="52" rx="9" ry="3" fill="#3f5c38" transform="rotate(-12 128 52)" opacity=".85"/>
+      <ellipse cx="74" cy="62" rx="7" ry="2.4" fill="#334c2e" transform="rotate(16 74 62)" opacity=".8"/>
+    </symbol>
+
+    <!-- 圆桌（俯视） -->
+    <symbol id="sRoundTable" viewBox="0 0 600 600">
+      <circle cx="300" cy="300" r="286" fill="#2a1c14" opacity=".55"/>
+      <circle cx="300" cy="300" r="272" fill="url(#gWood)"/>
+      <circle cx="300" cy="300" r="272" fill="none" stroke="#8a5a33" stroke-width="6"/>
+      <circle cx="300" cy="300" r="228" fill="none" stroke="#c9a76a" stroke-width="2" opacity=".5"/>
+      <circle cx="300" cy="300" r="150" fill="none" stroke="#c9a76a" stroke-width="1.4" opacity=".32"/>
+      <circle cx="300" cy="300" r="96" fill="#1d120c" opacity=".45"/>
+      <circle cx="300" cy="300" r="96" fill="none" stroke="#c9a76a" stroke-width="1.6" opacity=".45"/>
+      <g opacity=".22" fill="none" stroke="#e6cf9a" stroke-width="1.2">
+        <circle cx="300" cy="300" r="120"/><circle cx="300" cy="300" r="180"/>
+      </g>
+      <g fill="#f0d9a3" opacity=".18" font-size="0"></g>
+    </symbol>
+
+    <!-- 筷子/银箸 -->
+    <symbol id="sChopsticks" viewBox="0 0 160 24">
+      <rect x="6" y="6" width="140" height="5" rx="2.5" transform="rotate(-2 76 8)"/>
+      <rect x="6" y="14" width="140" height="5" rx="2.5" transform="rotate(2 76 16)"/>
+    </symbol>
+    <!-- 檐下宫灯（走廊顶灯） -->
+    <symbol id="sHangLamp" viewBox="0 0 120 190">
+      <g stroke="#3b2113" stroke-width="2.4" fill="none"><path d="M60 4 V46"/></g>
+      <rect x="36" y="44" width="48" height="10" rx="3" fill="#6d3a1c"/>
+      <path d="M26 54 h68 l-7 86 h-54 z" fill="url(#gLantern)"/>
+      <path d="M26 54 h68 l-7 86 h-54 z" fill="none" stroke="#a8382a" stroke-width="2"/>
+      <g stroke="#8c3a1c" stroke-width="1.1" opacity=".5" fill="none">
+        <path d="M60 54 V140"/><path d="M34 74 h52"/><path d="M32 96 h56"/><path d="M30 118 h60"/>
+      </g>
+      <ellipse cx="60" cy="96" rx="26" ry="36" fill="#fff0c4" opacity=".26"/>
+      <rect x="42" y="140" width="36" height="9" rx="2" fill="#6d3a1c"/>
+      <g stroke="#b8381f" stroke-width="2.6" fill="none">
+        <path d="M44 149 v16"/><path d="M60 149 v20"/><path d="M76 149 v16"/>
+      </g>
+    </symbol>
+
+    <!-- 石灯柱（走廊两侧） -->
+    <symbol id="sLampPost" viewBox="0 0 120 300">
+      <rect x="30" y="272" width="60" height="24" rx="4" fill="#3b4149"/>
+      <rect x="42" y="168" width="36" height="108" fill="#4c535c"/>
+      <rect x="42" y="168" width="36" height="108" fill="none" stroke="#5f6874" stroke-width="2"/>
+      <rect x="16" y="120" width="88" height="22" rx="4" fill="#3b4149"/>
+      <rect x="26" y="142" width="68" height="30" rx="4" fill="#2b3138"/>
+      <rect x="32" y="148" width="56" height="18" rx="2" fill="#ffc678" opacity=".28"/>
+      <path d="M18 120 L60 62 L102 120 Z" fill="#3b4149"/>
+      <path d="M18 120 L60 62 L102 120" fill="none" stroke="#5f6874" stroke-width="3"/>
+      <circle cx="60" cy="52" r="9" fill="#4c535c"/>
+    </symbol>
+
+    <!-- 走廊木构立柱 -->
+    <symbol id="sPost" viewBox="0 0 60 900">
+      <rect x="0" y="0" width="60" height="900" fill="#241a12"/>
+      <rect x="6" y="0" width="10" height="900" fill="#3a2a1c" opacity=".7"/>
+      <rect x="0" y="0" width="60" height="900" fill="none" stroke="#16100a" stroke-width="2"/>
+      <rect x="0" y="120" width="60" height="14" fill="#2c2016"/>
+      <rect x="0" y="780" width="60" height="14" fill="#2c2016"/>
+    </symbol>
+
+    <!-- 门槛石 -->
+    <symbol id="sSill" viewBox="0 0 300 40">
+      <rect x="0" y="10" width="300" height="24" rx="3" fill="#5a5247"/>
+      <rect x="0" y="10" width="300" height="9" rx="3" fill="#6f675a"/>
+      <rect x="0" y="30" width="300" height="8" fill="#2f2b25"/>
+    </symbol>
+
+    <radialGradient id="gHallLight" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#ffc678" stop-opacity=".5"/>
+      <stop offset="60%" stop-color="#ff9a3c" stop-opacity=".12"/>
+      <stop offset="100%" stop-color="#ff8a2c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<div id="app" data-scene="gate">
+  <noscript><p class="noscript">本店需开启 JavaScript 方可入席。</p></noscript>
+
+  <!-- ===================== 零 · 门庭 ===================== -->
+  <section class="scene scene-gate" id="scene-gate">
+    <div class="gate-art">
+      <canvas class="cv" id="cvBg" aria-hidden="true"></canvas>
+      <div class="moonwrap" id="gateMoon">
+        <svg class="moon-svg" viewBox="0 0 240 240" aria-hidden="true">
+          <circle cx="120" cy="120" r="118" fill="url(#gHalo)"/>
+          <circle cx="120" cy="120" r="104" fill="#fff6d6" opacity=".14"/>
+          <circle cx="120" cy="120" r="86" fill="url(#gMoonFace)"/>
+          <g fill="#c9b47c" opacity=".26">
+            <ellipse cx="94"  cy="96"  rx="21" ry="18"/>
+            <ellipse cx="146" cy="130" rx="15" ry="13"/>
+            <ellipse cx="108" cy="158" rx="11" ry="9"/>
+            <ellipse cx="152" cy="82"  rx="9"  ry="8"/>
+            <ellipse cx="76"  cy="140" rx="8"  ry="7"/>
+            <ellipse cx="128" cy="58"  rx="6"  ry="5"/>
+            <ellipse cx="82"  cy="62"  rx="5"  ry="4"/>
+          </g>
+          <g fill="#b9a469" opacity=".18">
+            <ellipse cx="94"  cy="96"  rx="12" ry="10"/>
+            <ellipse cx="146" cy="130" rx="8"  ry="7"/>
+          </g>
+          <circle cx="120" cy="120" r="86" fill="none" stroke="#fffdf0" stroke-width="2" opacity=".5"/>
+          <path d="M120 34 a86 86 0 0 1 0 172 a108 108 0 0 0 0 -172 z" fill="#c9b47c" opacity=".07"/>
+        </svg>
+      </div>
+    </div>
+
+    <svg class="gate-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <!-- 云 -->
+      <use href="#sCloud" class="gc gc1" width="640" height="256" x="-190" y="88"  color="#8b9ab2"/>
+      <use href="#sCloud" class="gc gc2" width="470" height="188" x="1240" y="28"  color="#7e8ea8"/>
+      <use href="#sCloud" class="gc gc3" width="380" height="152" x="1520" y="152" color="#6f8098"/>
+
+      <!-- 远山 -->
+      <path class="gate-hills far" d="M0 520 L170 476 L338 514 L512 464 L690 508 L880 470 L1070 512 L1262 470 L1440 510 L1600 480 L1600 900 L0 900 Z"/>
+      <path class="gate-hills" d="M0 600 L120 560 L240 594 L392 542 L552 586 L720 550 L900 592 L1080 554 L1260 596 L1430 558 L1600 590 L1600 900 L0 900 Z"/>
+
+      <!-- 门前地面 -->
+      <rect class="gate-ground" x="0" y="820" width="1600" height="160"/>
+
+      <!-- 白墙黛瓦：重檐反宇，翼角飞扬 -->
+      <g class="gate-house">
+        <!-- 主檐 -->
+        <path class="eave-horn" d="M232 566 C 186 566, 158 546, 142 512 C 196 546, 250 566, 336 572 Z"/>
+        <path class="eave-horn" d="M1368 566 C 1414 566, 1442 546, 1458 512 C 1404 546, 1350 566, 1264 572 Z"/>
+        <path class="eave-top" d="M232 566 C 420 610, 1180 610, 1368 566 L1368 620 C 1180 660, 420 660, 232 620 Z"/>
+        <g class="eave-tile-lines">
+          <path d="M282 592 C 430 622, 1170 622, 1318 592"/>
+          <path d="M332 612 C 470 640, 1130 640, 1268 612"/>
+          <path d="M382 632 C 500 656, 1100 656, 1218 632"/>
+        </g>
+        <path class="eave-ridge" d="M232 566 C 420 610, 1180 610, 1368 566"/>
+
+        <!-- 檐板 · 椽头 -->
+        <path class="eave-board" d="M228 618 C 420 660, 1180 660, 1372 618 L1372 652 C 1180 696, 420 696, 228 652 Z"/>
+        <g class="eave-rafter">
+          <path d="M320 654 V682 M440 664 V690 M560 670 V694 M680 674 V697 M800 676 V698
+                   M920 674 V697 M1040 670 V694 M1160 664 V690 M1280 654 V682"/>
+        </g>
+        <g class="eave-corbel">
+          <path d="M330 640 l14 8 l-14 8 z"/><path d="M1270 640 l-14 8 l14 8 z"/>
+        </g>
+
+        <!-- 次檐 -->
+        <path class="eave-second" d="M300 700 C 460 726, 1140 726, 1300 700 L1300 736 C 1140 764, 460 764, 300 736 Z"/>
+        <g class="eave-tile-lines thin">
+          <path d="M350 716 C 480 738, 1120 738, 1250 716"/>
+          <path d="M400 730 C 510 750, 1090 750, 1200 730"/>
+        </g>
+        <path class="eave-ridge thin" d="M300 700 C 460 726, 1140 726, 1300 700"/>
+        <path class="eave-board2" d="M296 736 C 460 764, 1140 764, 1304 736 L1304 752 C 1140 782, 460 782, 296 752 Z"/>
+
+        <!-- 白墙 -->
+        <rect class="wall" x="252" y="750" width="1096" height="230"/>
+        <path class="wall-shade" d="M252 750 H1348 V766 H252 Z"/>
+        <rect class="wall-base" x="244" y="968" width="1112" height="40"/>
+
+        <!-- 门（凹进墙内） -->
+        <g class="gate-doors">
+          <rect x="700" y="742" width="200" height="240" fill="#201207"/>
+          <rect x="706" y="752" width="188" height="230" fill="#2c1a10"/>
+          <g class="door-planks">
+            <path d="M748 752 V982 M790 752 V982 M832 752 V982 M874 752 V982"/>
+          </g>
+          <line x1="800" y1="752" x2="800" y2="982" class="door-seam"/>
+          <rect x="700" y="742" width="200" height="12" fill="#4a2f18"/>
+          <g class="door-studs">
+            <circle cx="762" cy="802" r="5.4"/><circle cx="762" cy="852" r="5.4"/>
+            <circle cx="838" cy="802" r="5.4"/><circle cx="838" cy="852" r="5.4"/>
+          </g>
+          <g class="door-rings">
+            <circle cx="776" cy="902" r="9.5"/><circle cx="824" cy="902" r="9.5"/>
+          </g>
+          <rect class="door-light" x="795" y="756" width="10" height="226"/>
+        </g>
+
+        <!-- 两侧支摘窗 -->
+        <g class="gate-windows">
+          <rect x="378" y="790" width="180" height="156" fill="#2c1a0e"/>
+          <rect x="378" y="790" width="180" height="156" fill="none" stroke="#7d5a34" stroke-width="6"/>
+          <g class="lattice">
+            <path d="M378 842 H558 M378 894 H558 M423 790 V946 M468 790 V946 M513 790 V946"/>
+          </g>
+          <g class="window-glow"><rect x="384" y="796" width="168" height="144"/></g>
+          <rect x="1042" y="790" width="180" height="156" fill="#2c1a0e"/>
+          <rect x="1042" y="790" width="180" height="156" fill="none" stroke="#7d5a34" stroke-width="6"/>
+          <g class="lattice">
+            <path d="M1042 842 H1222 M1042 894 H1222 M1087 790 V946 M1132 790 V946 M1177 790 V946"/>
+          </g>
+          <g class="window-glow"><rect x="1048" y="796" width="168" height="144"/></g>
+        </g>
+
+        <!-- 匾额（悬挂于檐下） -->
+        <g class="plaque">
+          <path class="plaque-chain" d="M700 676 V654 M900 676 V654"/>
+          <rect x="612" y="674" width="376" height="80" rx="8" fill="#3a2412" stroke="#c9a469" stroke-width="3"/>
+          <rect x="622" y="684" width="356" height="60" rx="5" fill="none" stroke="#c9a469" stroke-width="1.3" opacity=".65"/>
+          <text x="800" y="728" text-anchor="middle" class="plaque-text">中 华 大 饭 庄</text>
+        </g>
+
+        <!-- 木牌：一枝桂 -->
+        <g class="sideboard">
+          <path class="sideboard-hang" d="M1408 700 v-22"/>
+          <rect x="1376" y="700" width="66" height="184" rx="5" fill="#6b4526" stroke="#d5b479" stroke-width="2"/>
+          <rect x="1384" y="708" width="50" height="168" rx="3" fill="none" stroke="#d5b479" stroke-width="1" opacity=".5"/>
+          <text x="1409" y="750" text-anchor="middle" class="sideboard-text">一</text>
+          <text x="1409" y="800" text-anchor="middle" class="sideboard-text">枝</text>
+          <text x="1409" y="850" text-anchor="middle" class="sideboard-text">桂</text>
+        </g>
+
+        <!-- 灯笼（自檐下垂，写在门两侧） -->
+        <g class="lantern-wrap lw1">
+          <path class="lantern-cord" d="M660 690 V742"/>
+          <use href="#sLantern" width="100" height="170" x="0" y="0" class="lantern"/>
+        </g>
+        <g class="lantern-wrap lw2">
+          <path class="lantern-cord" d="M940 690 V742"/>
+          <use href="#sLantern" width="100" height="170" x="0" y="0" class="lantern"/>
+        </g>
+      </g>
+
+      <!-- 老桂树（墙外左侧，枝柯探到墙头） -->
+      <g class="gate-tree">
+        <path class="trunk" d="M120 1080 C 168 940, 214 826, 250 726 C 264 676, 270 640, 266 604"/>
+        <g class="boughs">
+          <path d="M250 726 C 206 680, 164 662, 122 660"/>
+          <path d="M262 650 C 304 610, 350 596, 400 598"/>
+          <path d="M246 780 C 198 762, 154 766, 112 786"/>
+        </g>
+        <g class="foliage">
+          <ellipse cx="118" cy="648" rx="94" ry="48"/>
+          <ellipse cx="330" cy="592" rx="102" ry="46"/>
+          <ellipse cx="182" cy="544" rx="86" ry="42"/>
+          <ellipse cx="102" cy="772" rx="80" ry="36"/>
+          <ellipse cx="28" cy="698" rx="66" ry="32"/>
+        </g>
+      </g>
+
+      <!-- 竹影 -->
+      <use href="#sBamboo" class="gate-bamboo b1" width="120" height="320" x="0" y="0"/>
+      <use href="#sBamboo" class="gate-bamboo b2" width="120" height="320" x="0" y="0"/>
+
+      <!-- 石阶 -->
+      <g class="steps">
+        <path d="M508 1080 L1092 1080 L1058 1040 L542 1040 Z"/>
+        <path d="M542 1040 L1058 1040 L1030 1006 L570 1006 Z"/>
+        <path d="M570 1006 L1030 1006 L1008 978 L592 978 Z"/>
+        <path d="M592 978 L1008 978 L992 956 L608 956 Z"/>
+      </g>
+
+      <!-- 水缸（前置） -->
+      <g class="jar-wrap">
+        <use href="#sJar" class="jar" width="200" height="200" x="0" y="0"/>
+      </g>
+    </svg>
+
+    <!-- 一枝桂：自右上角横斜而出，掠过月前，横跨半个屏幕 -->
+    <svg class="branch-layer" viewBox="0 0 1600 760" preserveAspectRatio="xMinYMin slice" aria-hidden="true">
+      <use href="#sOsmanthus" width="420" height="300" x="0" y="0"
+           class="gate-branch branch-a" transform="translate(1616 64) rotate(206) scale(2.05)"/>
+      <use href="#sOsmanthus" width="420" height="300" x="0" y="0"
+           class="gate-branch branch-b" transform="translate(1560 10) rotate(220) scale(1.3)"/>
+      <use href="#sOsmanthus" width="420" height="300" x="0" y="0"
+           class="gate-branch branch-c" transform="translate(-40 4) rotate(26) scale(1.15)"/>
+    </svg>
+
+    <div class="gate-title">
+      <p class="t-eyebrow">中 华 大 饭 庄 · 一 枝 桂</p>
+      <h1 class="t-main">一枝桂赏月宴</h1>
+      <div class="t-rule"><span></span><i>❋</i><span></span></div>
+      <p class="t-sub">桂子月中落，天香云外飘</p>
+      <p class="t-second">今夜六道时令，清浓相济，荤素相和，咸甜相续</p>
+      
+    </div>
+
+    <div class="gate-cta">
+      <button class="btn btn-ghost" id="btnSound" type="button" aria-pressed="false">琴 声</button>
+      <button class="btn btn-primary" id="btnClimb" type="button">拾 级 而 上</button>
+      <button class="btn btn-ghost" id="btnHelp" type="button">何 处 去</button>
+    </div>
+  </section>
+
+  <!-- ===================== 一 · 门庭选天时 ===================== -->
+  <section class="scene scene-sky" id="scene-sky">
+    <canvas class="cv sky-canvas" id="cvSky" aria-hidden="true"></canvas>
+
+    <div class="sky-frame">
+      <div class="sky-plaque">
+        <span class="sp-name">中华大饭庄</span>
+        <span class="sp-side">一枝桂</span>
+      </div>
+      <p class="sky-poem" id="skyPoem">今夜月明人尽望，不知秋思落谁家。</p>
+    </div>
+
+    <!-- 序进：先观天，再择时 -->
+    <div class="seq" id="seqBar">
+      <span class="seq-step on" data-step="0"><i>壹</i>观 天</span>
+      <span class="seq-line"></span>
+      <span class="seq-step" data-step="1"><i>贰</i>择 时</span>
+    </div>
+
+    <div class="seq-prompt" id="seqPrompt">
+      <p class="sp-kicker">石 阶 之 上 · 其 一</p>
+      <p class="sp-q">抬首看天，今夜是何等天色？</p>
+      <p class="sp-note" id="seqNote">天上一朵云、一丝雨、一片霜，皆可点；懒得挑，便让风自己来。</p>
+    </div>
+
+    <div class="sky-readout">
+      <div class="ro-item"><span class="ro-k">天时</span><span class="ro-v" id="roWeather">晴</span></div>
+      <div class="ro-item"><span class="ro-k">时刻</span><span class="ro-v" id="roTime">夜半</span></div>
+      <div class="ro-item"><span class="ro-k">月位</span><span class="ro-v" id="roMoon">中天</span></div>
+    </div>
+
+    <div class="sky-hotspots" id="weatherHotspots">
+      <button class="hot hot-cloud" data-weather="sunny"  type="button"><i class="hot-dot"></i><b>点云看晴</b></button>
+      <button class="hot hot-thin"   data-weather="cloudy" type="button"><i class="hot-dot"></i><b>点薄云</b></button>
+      <button class="hot hot-veil"   data-weather="veiled" type="button"><i class="hot-dot"></i><b>云遮月</b></button>
+      <button class="hot hot-rain"   data-weather="rain"   type="button"><i class="hot-dot"></i><b>点雨微雨</b></button>
+      <button class="hot hot-wind"   data-weather="wind"   type="button"><i class="hot-dot"></i><b>点桂起风</b></button>
+      <button class="hot hot-frost"  data-weather="frost"  type="button"><i class="hot-dot"></i><b>点霜降霜</b></button>
+    </div>
+
+    <div class="sky-random">
+      <button class="btn btn-roulette" id="btnWeatherRandom" type="button">风 起 随 缘</button>
+    </div>
+
+    <div class="time-panel" id="timePanel" hidden>
+      <div class="lantern-drag" id="lanternDrag" role="slider" aria-label="拖动灯笼调整时辰" aria-valuemin="0" aria-valuemax="4" aria-valuenow="1" tabindex="0">
+        <div class="ld-rope"></div>
+        <svg class="ld-lantern" viewBox="0 0 100 170"><use href="#sLantern" width="100" height="170" x="0" y="0"/></svg>
+        <div class="ld-glow"></div>
+        <div class="ld-hint">拖灯 · 定更</div>
+      </div>
+      <div class="time-ticks" id="timeTicks">
+        <button data-time="0" type="button"><b>初更</b><i>月在东</i></button>
+        <button data-time="1" type="button"><b>夜半</b><i>月在中天</i></button>
+        <button data-time="2" type="button"><b>月斜</b><i>月偏西</i></button>
+        <button data-time="3" type="button"><b>将晓</b><i>月西沉</i></button>
+        <button data-time="4" type="button"><b>满月当空</b><i>银白铺地</i></button>
+      </div>
+      <button class="btn btn-roulette small" id="btnTimeRandom" type="button">听 更</button>
+    </div>
+
+    <div class="sky-cta">
+      <button class="btn btn-ghost" id="btnSkyBack" type="button">回 望 门 庭</button>
+      <button class="btn btn-ghost" id="btnSeqBack" type="button" hidden>再 看 一 眼 天</button>
+      <button class="btn btn-primary" id="btnPushDoor" type="button" hidden>推 门 入 店</button>
+    </div>
+
+    <div class="door-open-veil" id="doorVeil"></div>
+  </section>
+
+  <!-- ===================== 二 · 大堂 ===================== -->
+  <section class="scene scene-hall" id="scene-hall">
+    <div class="hall-art">
+      <canvas class="cv" id="cvHall" aria-hidden="true"></canvas>
+    </div>
+    <svg class="hall-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect x="0" y="0" width="1600" height="900" fill="url(#gWall)" opacity=".12"/>
+      <!-- 后墙 -->
+      <rect x="0" y="80" width="1600" height="620" fill="#2a1e17" opacity=".55"/>
+      <!-- 木楼梯 -->
+      <g class="hall-stairs">
+        <path d="M1180 900 L1180 300 L1600 300 L1600 900 Z" fill="#33211a" opacity=".8"/>
+        <g stroke="#7a5330" stroke-width="6" fill="none">
+          <path d="M1210 340 H1600"/><path d="M1230 400 H1600"/><path d="M1250 460 H1600"/>
+          <path d="M1270 520 H1600"/><path d="M1290 580 H1600"/><path d="M1310 640 H1600"/>
+        </g>
+      </g>
+      <!-- 屏风 -->
+      <g class="hall-screen">
+        <rect x="180" y="240" width="430" height="480" rx="8" fill="#3b2a1c" stroke="#8a6236" stroke-width="5"/>
+        <g stroke="#c9a469" stroke-width="2" opacity=".5" fill="none">
+          <path d="M200 400 C 280 340, 380 330, 470 380 C 530 410, 570 430, 590 420"/>
+          <path d="M240 470 C 320 440, 420 450, 520 500"/>
+        </g>
+        <g fill="#d9c08a" opacity=".38">
+          <circle cx="470" cy="360" r="30"/>
+        </g>
+      </g>
+      <!-- 灯笼串 -->
+      <g class="hall-lanterns">
+        <use href="#sLantern" class="hl hl1"/>
+        <use href="#sLantern" class="hl hl2"/>
+        <use href="#sLantern" class="hl hl3"/>
+      </g>
+      <!-- 柜台 -->
+      <g class="hall-counter">
+        <rect x="640" y="640" width="500" height="150" rx="4" fill="#4a2f1c"/>
+        <rect x="640" y="640" width="500" height="22" rx="4" fill="#6d4526"/>
+        <g fill="#d9c08a" opacity=".35"><rect x="700" y="690" width="90" height="60"/><rect x="820" y="690" width="90" height="60"/><rect x="940" y="690" width="90" height="60"/></g>
+      </g>
+      <!-- 桂花盆景 -->
+      <use href="#sOsmanthus" class="hall-bonsai"/>
+      <!-- 水牌 -->
+      <g class="hall-board" id="hallBoard">
+        <rect x="620" y="196" width="360" height="430" rx="10" fill="#efe3c8" stroke="#8a6236" stroke-width="6"/>
+        <rect x="640" y="216" width="320" height="390" rx="6" fill="none" stroke="#b99a63" stroke-width="2"/>
+      </g>
+    </svg>
+
+    <div class="hall-text">
+      <h2 class="hall-title">今 夜 赏 月 宴</h2>
+      <ul class="hall-board-list">
+        <li>六道时令佳肴</li>
+        <li>清浓相济</li>
+        <li>荤素相和</li>
+        <li>咸甜相续</li>
+      </ul>
+    </div>
+
+    <div class="hall-greet">
+      <div class="greet-waiter"><span class="gw-icon"></span></div>
+      <p class="greet-line" id="hallGreet">客官，里面请。</p>
+      <p class="greet-sub" id="hallGreetSub">今夜月正好，水牌上有六道时令，六间雅室。</p>
+    </div>
+
+    <div class="hall-cta">
+      <button class="btn btn-ghost" id="btnComeBack" type="button">再 看 天 时</button>
+      <button class="btn btn-ghost" id="btnWaiterPickHall" type="button">听 小 二 推 荐</button>
+      <button class="btn btn-primary" id="btnToCorridor" type="button">随 我 来</button>
+    </div>
+  </section>
+
+  <!-- ===================== 三 · 走廊 ===================== -->
+  <section class="scene scene-corridor" id="scene-corridor">
+    <div class="corridor-viewport" id="corridorViewport">
+      <div class="corridor-world" id="corridorWorld">
+        <div class="cw-ceiling"></div>
+        <div class="cw-beams"></div>
+        <div class="cw-sky"></div>
+        <div class="cw-wall"></div>
+        <div class="cw-floor"></div>
+        <div class="cw-doors" id="cwDoors"></div>
+        <div class="cw-end">
+          <div class="end-lantern"><svg viewBox="0 0 100 170"><use href="#sLantern"/></svg></div>
+          <div class="end-waiter"><i></i><b></b></div>
+          <button class="btn btn-roulette end-btn" id="btnWaiterPick" type="button">请 小 二 推 荐</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="corridor-hud">
+      <div class="hud-scroll">
+        <span class="hud-label">走 廊</span>
+        <div class="hud-track"><div class="hud-thumb" id="hudThumb"></div></div>
+        <span class="hud-count"><b id="hudSeen">0</b>/6 已探</span>
+      </div>
+      <p class="hud-tip" id="hudTip">左右拖动长卷 · 门会自己半开 · 走近了可探头</p>
+    </div>
+
+    <div class="corridor-cta">
+      <button class="btn btn-ghost" id="btnBackHall" type="button">回 大 堂</button>
+      <button class="btn btn-ghost" id="btnWalkLeft" type="button">← 前 行</button>
+      <button class="btn btn-ghost" id="btnWalkRight" type="button">前 行 →</button>
+    </div>
+  </section>
+
+  <!-- ===================== 四 · 包间落座 ===================== -->
+  <section class="scene scene-room" id="scene-room">
+    <div class="room-art" id="roomArt">
+      <canvas class="cv" id="cvRoom" aria-hidden="true"></canvas>
+      <svg class="room-svg" id="roomSvg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect class="room-tint" x="0" y="0" width="1600" height="900"/>
+        <g class="room-deco" id="roomDeco"></g>
+      </svg>
+    </div>
+
+    <header class="room-head">
+      <div class="rh-name">
+        <h2 id="roomName">雅室</h2>
+        <p class="rh-couplet" id="roomCouplet">对联</p>
+      </div>
+      <div class="rh-meta">
+        <span id="roomWeatherTag" class="tag">晴 · 夜半</span>
+        <span id="roomSenseTag" class="tag tag-ghost">气味 · 声音</span>
+      </div>
+    </header>
+
+    <div class="room-body">
+      <nav class="stage-tabs" id="stageTabs">
+        <button class="stab on" data-stage="0" type="button"><i>壹</i><b>落 座</b><span>定口味 · 报忌口 · 说心愿</span></button>
+        <button class="stab" data-stage="1" type="button"><i>贰</i><b>上 菜</b><span>排次第 · 看每道菜的微调</span></button>
+        <button class="stab" data-stage="2" type="button"><i>叁</i><b>佐 宴</b><span>茶饮 · 小菜 · 盘器 · 诗签</span></button>
+      </nav>
+
+      <!-- 壹 · 落座 -->
+      <section class="stage on" data-stage="0">
+        <div class="card">
+          <div class="card-head"><h3>口 味</h3><span class="card-hint">照本店本色，或按客官的口来</span></div>
+          <div class="chips" id="flavorChips"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>忌 口</h3><button class="mini" id="btnAllergyClear" type="button">全不忌</button></div>
+          <p class="card-hint">报一声忌口，相关那道菜的配方自会换料，不必客官费心。</p>
+          <div class="chips chips-allergy" id="allergyChips"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>心 愿</h3><span class="card-hint">今夜这一席，为着什么</span></div>
+          <div class="chips chips-mood" id="moodChips"></div>
+        </div>
+        <div class="card card-quiet" id="wishCard">
+          <p class="wish-line" id="wishLine">桌上先摆空盘、茶盏、小菜碟。客官落座，再慢慢点。</p>
+        </div>
+      </section>
+
+      <!-- 贰 · 上菜 -->
+      <section class="stage" data-stage="1">
+        <div class="stage-bar">
+          <h3 class="stage-title">上 菜 次 第</h3>
+          <p class="stage-sub">清浓相济 · 荤素相和 · 咸甜相续　—　按住可拖，改了序，客人反应也不同</p>
+          <div class="stage-actions">
+            <button class="mini" id="btnOrderRecommend" type="button">请 先 生 定 序</button>
+            <button class="mini" id="btnOrderRandom" type="button">随 缘 排 序</button>
+          </div>
+        </div>
+        <ol class="course-list" id="courseList"></ol>
+        <div class="score-box">
+          <div class="score-row" id="scoreRow"></div>
+          <p class="score-comment" id="scoreComment"></p>
+          <div class="guest-row" id="guestRow"></div>
+        </div>
+      </section>
+
+      <!-- 叁 · 佐宴 -->
+      <section class="stage" data-stage="2">
+        <div class="ret-grid">
+          <div class="card">
+            <div class="card-head"><h3>茶 饮</h3><button class="mini" id="btnTeaShuffle" type="button">换一换</button></div>
+            <p class="card-hint">依天时冷暖与本间茶池，分前段、后段、配月饼三段。</p>
+            <ul class="ret-list" id="teaList"></ul>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>小 菜</h3><button class="mini" id="btnSideShuffle" type="button">换一换</button></div>
+            <p class="card-hint">先按忌口筛过，实在凑不齐两样，才肯放宽一分。</p>
+            <ul class="ret-list" id="sideList"></ul>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>盘 器</h3><button class="mini" id="btnPlateShuffle" type="button">换 器</button></div>
+            <p class="card-hint">只在本间风格里换材质，绝不串味。</p>
+            <p class="ret-plate" id="plateText"></p>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>诗 签</h3><button class="mini" id="btnPoemShuffle" type="button">换 一 句</button></div>
+            <p class="card-hint">本间诗人 × 今夜天时 × 客官心愿，三样凑成一句。</p>
+            <p class="ret-poem" id="poemText"></p>
+            <p class="ret-poem-src" id="poemSrc"></p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="room-cta">
+      <button class="btn btn-ghost" id="btnLeaveRoom" type="button">出 房 · 再 走 走</button>
+      <button class="btn btn-primary stage-next" id="btnStageNext" type="button" hidden>次 第 已 定 · 看 看 佐 宴</button>
+      <button class="btn btn-ghost" id="btnGlobalRandom" type="button">全 部 重 来</button>
+      <button class="btn btn-primary" id="btnSitDown" type="button">落 座 · 成 宴</button>
+    </footer>
+
+    <div class="modal" id="recipeModal" hidden>
+      <div class="modal-card">
+        <button class="modal-x" data-close type="button" aria-label="关闭">✕</button>
+        <div class="modal-art" id="recipeArt"></div>
+        <h3 id="recipeName">菜</h3>
+        <p class="modal-idea" id="recipeIdea"></p>
+        <div class="modal-sec">
+          <h4>本色配方</h4>
+          <ul id="recipeBase"></ul>
+        </div>
+        <div class="modal-sec">
+          <h4>今夜微调</h4>
+          <ul id="recipeTune"></ul>
+        </div>
+        <div class="modal-sec" id="recipeSwapSec">
+          <h4>替换</h4>
+          <p id="recipeSwap"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 五 · 成宴 ===================== -->
+  <section class="scene scene-feast" id="scene-feast">
+    <div class="feast-bg" id="feastBg">
+      <canvas class="cv" id="cvFeast" aria-hidden="true"></canvas>
+    </div>
+    <div class="feast-inner">
+      <header class="feast-head">
+        <h2 class="feast-title">一 枝 桂 赏 月 宴 图</h2>
+        <p class="feast-sub" id="feastSub">江月榭 · 薄云夜半 · 清思宴</p>
+        <p class="feast-poem" id="feastPoem"></p>
+        <p class="feast-poem-src" id="feastPoemSrc"></p>
+      </header>
+
+      <div class="table-stage" id="tableStage">
+        <svg class="table-svg" viewBox="0 0 600 600" aria-hidden="true"><use href="#sRoundTable"/></svg>
+        <div class="table-slots" id="tableSlots"></div>
+        <div class="table-center">
+          <span class="tc-name" id="tcName">雅室</span>
+          <span class="tc-line" id="tcLine">一枝桂</span>
+        </div>
+      </div>
+
+      <div class="feast-side">
+        <div class="feast-notes">
+          <div class="note" id="noteTea"><b>茶饮</b><span></span></div>
+          <div class="note" id="noteSide"><b>小菜</b><span></span></div>
+          <div class="note" id="notePlate"><b>盘器</b><span></span></div>
+          <div class="note" id="noteMood"><b>心愿</b><span></span></div>
+        </div>
+
+        <div class="feast-cards" id="feastCards"></div>
+
+        <div class="moon-card-wrap">
+          <div class="moon-card" id="moonCard">
+            <svg class="mc-moon" viewBox="0 0 200 200" aria-hidden="true">
+              <circle cx="100" cy="100" r="86" fill="url(#gHalo)"/>
+              <circle cx="100" cy="100" r="54" fill="url(#gMoon)"/>
+              <g fill="#e2cf9c" opacity=".45">
+                <circle cx="84" cy="88" r="10"/><circle cx="116" cy="112" r="7"/><circle cx="104" cy="76" r="5"/>
+              </g>
+            </svg>
+            <div class="mc-text">
+              <p class="mc-kicker">月 光 卡</p>
+              <p class="mc-name" id="mcName">江月榭 · 薄云夜半 · 清思宴</p>
+              <p class="mc-line" id="mcLine">春江潮水连海平，海上明月共潮生。</p>
+              <p class="mc-meta" id="mcMeta"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feast-cta">
+        <button class="btn btn-ghost" id="btnFeastWalk" type="button">再 走 一 遍 走 廊</button>
+        <button class="btn btn-ghost" id="btnFeastShare" type="button">抄 下 宴 帖</button>
+        <button class="btn btn-ghost" id="btnFeastAgain" type="button">全 局 随 缘</button>
+        <button class="btn btn-primary" id="btnFeastDownload" type="button">存 下 宴 图</button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+  </section>
+
+  <!-- 通用预览层 -->
+  <div class="preview" id="preview" hidden>
+    <div class="preview-card" id="previewCard">
+      <button class="preview-x" id="previewX" type="button" aria-label="退出预览">✕</button>
+      <div class="preview-inner">
+        <p class="pv-index" id="pvIndex">其一</p>
+        <h3 class="pv-name" id="pvName">桂影阁</h3>
+        <p class="pv-couplet" id="pvCouplet">桂子月中落，天香云外飘</p>
+        <div class="pv-senses">
+          <p class="pv-sense"><b>气味</b><span id="pvScent"></span></p>
+          <p class="pv-sense"><b>声音</b><span id="pvSound"></span></p>
+          <p class="pv-sense"><b>意 象</b><span id="pvIdea"></span></p>
+        </div>
+        <p class="pv-poem" id="pvPoem"></p>
+        <p class="pv-tip" id="pvTip">门半掩着，里头有人声。</p>
+        <div class="pv-cta">
+          <button class="btn btn-ghost" id="pvBack" type="button">退 回 走 廊</button>
+          <button class="btn btn-primary" id="pvEnter" type="button">入 此 间</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 说明层 -->
+  <div class="modal modal-help" id="helpModal" hidden>
+    <div class="modal-card">
+      <button class="modal-x" data-close type="button" aria-label="关闭">✕</button>
+      <h3>何 处 去</h3>
+      <ol class="help-list">
+        <li><b>拾级而上</b> → 站在石阶上，抬头点天空选天气，拖灯笼定时辰。</li>
+        <li><b>推门入店</b> → 大堂迎宾，水牌上有今夜六道时令。</li>
+        <li><b>走廊</b> → 左右拖动长卷，六间雅室依次经过，可探头看，也可入此间；尽头有小二可请推荐。</li>
+        <li><b>落座</b> → 先定口味忌口心愿，再排上菜次第，茶饮小菜盘器诗句会自动相配，也可随手换。</li>
+        <li><b>成宴</b> → 生成赏月宴图与月光卡，可抄下宴帖、存下宴图、再走一遍走廊。</li>
+      </ol>
+      <p class="help-note">全店无一张图片：月亮、云雨霜、桂花、包间、菜盘、宴图皆由 SVG / Canvas / CSS 画成。</p>
+    </div>
+  </div>
+
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
